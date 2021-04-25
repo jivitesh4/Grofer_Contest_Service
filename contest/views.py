@@ -82,13 +82,16 @@ class GroferContest(viewsets.ViewSet):
             response[str(last_week_winner.contest_name)] = last_week_winner.winner  
         return Response(data = response, content_type="application/json")
 
-    def find_winner(self,contest):
-        """picking a random winner from all the user who took part """
-        winner = random.choice(contest)
-        """making an object of contest table to store winner for the contest"""
-        store_winner = All_Contests.objects.get(contest_name = winner.contest)
-        """getting user information from user id from user table """
-        user = Users.objects.get(user_id = winner.user_id)
-        """storing the name of the winner in contest table """
-        store_winner.winner = user.firstname + " " + user.lastname
-        store_winner.save()
+    def find_winner(self,contests):
+        for contest in contests:
+            # import ipdb;ipdb.set_trace()
+            particepants = Utc.objects.filter(contest = contest.contest_name)
+            """picking a random winner from all the user who took part """
+            winner = random.choice(particepants)
+            """making an object of contest table to store winner for the contest"""
+            store_winner = All_Contests.objects.get(contest_name = winner.contest)
+            """getting user information from user id from user table """
+            user = Users.objects.get(user_id = winner.user_id)
+            """storing the name of the winner in contest table """
+            store_winner.winner = user.firstname + " " + user.lastname
+            store_winner.save()

@@ -76,15 +76,16 @@ class GroferContest(viewsets.ViewSet):
         response = {}
         startdate = datetime.today() - timedelta(days = 7)
         enddate = datetime.today() - timedelta(days =1)
-        """ making a query for all the next upcoming contest """
-        last_week_winners =All_Contests.objects.filter(start_date__range=[startdate, enddate])
+        """ making a query for all the last weekk  contest """
+        last_week_winners =All_Contests.objects.filter(end_date__range=[startdate, enddate])
+        """iterating over all the last week contest """
         for last_week_winner in last_week_winners:
+            """find the winner of this contest and putting it in the response dict """
             response[str(last_week_winner.contest_name)] = last_week_winner.winner  
         return Response(data = response, content_type="application/json")
 
     def find_winner(self,contests):
         for contest in contests:
-            # import ipdb;ipdb.set_trace()
             particepants = Utc.objects.filter(contest = contest.contest_name)
             """picking a random winner from all the user who took part """
             winner = random.choice(particepants)
